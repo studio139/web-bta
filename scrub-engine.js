@@ -129,7 +129,7 @@ function mountScrollWorld(container, config) {
   const SEGMENTS = [];
   SECTIONS.forEach((s, i) => {
     const dive = { kind: 'dive', si: i, clip: s.clip, clipM: s.clipMobile, still: s.still,
-                   poster: s.poster, posterM: s.posterMobile,
+                   stillM: s.stillMobile, poster: s.poster, posterM: s.posterMobile,
                    accent: s.accent, w: s.scroll || DIVE_W, linger: s.linger || 0 };
     SEGMENTS.push(dive);
     s._seg = dive;
@@ -188,7 +188,8 @@ function mountScrollWorld(container, config) {
     // In stills mode the clip never loads, so the higher-fidelity source still is the
     // better permanent image.
     const pref = phoneClass ? (s.posterM || s.poster) : s.poster;
-    const posterSrc = (!stillsOnly && pref) ? pref : s.still;
+    const stillArt = (phoneClass && s.stillM) ? s.stillM : s.still;   // portrait art on phones
+    const posterSrc = (!stillsOnly && pref) ? pref : stillArt;
     if (posterSrc) img.src = posterSrc;
     scene.appendChild(img); stage.appendChild(scene);
     s.el = scene; s.img = img; s.video = null; s.hasClip = false;
@@ -269,21 +270,26 @@ function mountScrollWorld(container, config) {
     // Serve the lighter mobile encode on phone-class devices when one was provided
     // (tablets and desktops get the full master — see phoneClass above).
     const url = (phoneClass && s.clipM) ? s.clipM : s.clip;
-    fetch(url).then(r => r.ok ? r.blob() : Promise.reject(new Error('404')))
-      .then(blob => {
+    // Prefetch only to warm the HTTP cache, then hand the browser the DIRECT url.
+    // WebKit/iOS rejects blob object-URLs on <video> (instant `error`, readyState 0) —
+    // that was the real "stills on iPhone" bug. Never feed blobs to video here.
+    const proceed = () => {
         const v = document.createElement('video');
         v.className = 'sw-scene__video';
         v.muted = true; v.playsInline = true; v.preload = 'auto';
         v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
-        v.src = URL.createObjectURL(blob);
+        v.src = url;
         v.addEventListener('loadedmetadata', () => { s.ready = true; read(); });
         // Reveal the video (hide the still poster) only once a real frame has
         // painted — on iOS a seeked-but-never-played muted video stays blank, so
         // hiding the still on metadata alone would flash an empty scene.
         v.addEventListener('seeked', () => { s.el.classList.add('has-clip'); }, { once: true });
         v.addEventListener('loadeddata', () => { try { v.pause(); } catch (e) {} if (userReady) primeVideo(v); });
+        v.addEventListener('error', () => { s.loading = false; s.ready = false; }, { once: true });
         s.el.appendChild(v); s.video = v; s.hasClip = true;
-      }).catch(() => { s.loading = false; });
+    };
+    fetch(url).then(r => { if (!r.ok) throw new Error('' + r.status); return r.blob(); })
+      .then(proceed, () => { proceed(); });
   }
 
   function read() {

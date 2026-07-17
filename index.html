@@ -157,6 +157,10 @@
     .demo-s3 { top: 13vh; left: 4.5vw; width: min(30vw, 400px); }  /* opposite the copy, like scene 2 */
     /* phones: a soft white veil behind an active demo card calms the film under it */
     .demo-veil { position: fixed; inset: 0; z-index: 29; background: var(--sw-bg); opacity: 0; pointer-events: none; }
+    /* phones: soft white wash behind the copy zone — keeps type readable over close-up agents */
+    .copy-scrim { display: none; position: fixed; inset: 0 0 auto 0; height: 64vh; z-index: 28; pointer-events: none; opacity: 0;
+      background: linear-gradient(to bottom, rgba(252,251,250,.97) 0%, rgba(252,251,250,.93) 46%, rgba(252,251,250,0) 100%); }
+    @media (max-width: 700px) { .copy-scrim { display: block; } }
     .demo-card {
       background: rgba(255,255,255,.97); border: 1px solid rgba(42,43,51,.08);
       border-radius: 16px; overflow: hidden; text-align: start;
@@ -255,7 +259,8 @@
     /* ---------- Contact banner ---------- */
     .contact-banner {
       position: fixed; bottom: clamp(88px, 12vh, 110px); left: clamp(16px, 2.6vw, 32px); z-index: 90;
-      width: min(88vw, 340px); background: rgba(255,255,255,.97); backdrop-filter: blur(12px);
+      box-sizing: border-box;                          /* padding inside the width — else it overflows 375px phones */
+      width: min(88vw, 394px); background: rgba(255,255,255,.97); backdrop-filter: blur(12px);
       border: 1px solid rgba(42,43,51,.08); border-radius: 18px;
       box-shadow: 0 24px 60px rgba(42,43,51,.16);
       padding: 26px 26px 22px;
@@ -344,7 +349,8 @@
       .dock-btn { width: 46px; height: 46px; }
       .dock-btn svg { width: 21px; height: 21px; }
       .dock-cta { padding: 13px 22px; }
-      .contact-banner { bottom: calc(78px + env(safe-area-inset-bottom)); }
+      .contact-banner { bottom: calc(78px + env(safe-area-inset-bottom)); width: 92vw; left: 4vw;
+        max-height: calc(100vh - 150px); overflow-y: auto; }
       .sw-route { display: none; }   /* keep phone edges clean */
     }
 
@@ -383,6 +389,7 @@
   </div>
 
   <div class="demo-veil" aria-hidden="true"></div>
+  <div class="copy-scrim" aria-hidden="true"></div>
 
   <!-- Film text layer — scroll-mapped, above the video -->
   <div class="film-copy" aria-hidden="false">
@@ -585,7 +592,7 @@
       else if (a.href.indexOf('tel:') === 0) track('phone_click', { link_location: a.className || 'link' });
     }, true);
   </script>
-  <script src="scrub-engine.js"></script>
+  <script src="scrub-engine.js?v=3"></script>
   <script>
     // ---------- scroll-world mount ----------
     var CFG = {
@@ -596,28 +603,38 @@
       crossfade: 0.1,
       sections: [
         { id: 's1', label: 'הצוות',
-          still: 'assets/scene1-still.webp', poster: 'assets/leg1-poster.webp', posterMobile: 'assets/leg1-poster-m.webp',
-          clip: 'assets/vid/leg1.mp4', clipMobile: 'assets/vid/leg1-m.mp4',
+          still: 'assets/scene1-still.webp?v=3', stillMobile: 'assets/scene1-still-m.webp?v=3',
+          poster: 'assets/leg1-poster.webp?v=3', posterMobile: 'assets/leg1-poster-m.webp?v=3',
+          clip: 'assets/vid/leg1.mp4?v=3', clipMobile: 'assets/vid/leg1-m.mp4?v=3',
           accent: '#E4603F', scroll: 1.9, linger: 0.45 },
         { id: 's2', label: 'המערכת',
-          still: 'assets/scene2-still.webp', poster: 'assets/leg2-poster.webp', posterMobile: 'assets/leg2-poster-m.webp',
-          clip: 'assets/vid/leg2.mp4', clipMobile: 'assets/vid/leg2-m.mp4',
+          still: 'assets/scene2-still.webp?v=3', stillMobile: 'assets/scene2-still-m.webp?v=3',
+          poster: 'assets/leg2-poster.webp?v=3', posterMobile: 'assets/leg2-poster-m.webp?v=3',
+          clip: 'assets/vid/leg2.mp4?v=3', clipMobile: 'assets/vid/leg2-m.mp4?v=3',
           accent: '#E4603F', scroll: 1.85, linger: 0.5 },
         { id: 's3', label: 'הסוכנים',
-          still: 'assets/scene3-still.webp', poster: 'assets/leg3-poster.webp', posterMobile: 'assets/leg3-poster-m.webp',
-          clip: 'assets/vid/leg3.mp4', clipMobile: 'assets/vid/leg3-m.mp4',
+          still: 'assets/scene3-still.webp?v=3', stillMobile: 'assets/scene3-still-m.webp?v=3',
+          poster: 'assets/leg3-poster.webp?v=3', posterMobile: 'assets/leg3-poster-m.webp?v=3',
+          clip: 'assets/vid/leg3.mp4?v=3', clipMobile: 'assets/vid/leg3-m.mp4?v=3',
           accent: '#E4603F', scroll: 1.85, linger: 0.5 },
         { id: 's4', label: 'התוצאה',
-          still: 'assets/scene4-still.webp', poster: 'assets/leg4-poster.webp', posterMobile: 'assets/leg4-poster-m.webp',
-          clip: 'assets/vid/leg4.mp4', clipMobile: 'assets/vid/leg4-m.mp4',
+          still: 'assets/scene4-still.webp?v=3', stillMobile: 'assets/scene4-still-m.webp?v=3',
+          poster: 'assets/leg4-poster.webp?v=3', posterMobile: 'assets/leg4-poster-m.webp?v=3',
+          clip: 'assets/vid/leg4.mp4?v=3', clipMobile: 'assets/vid/leg4-m.mp4?v=3',
           accent: '#E4603F', scroll: 1.85, linger: 0.5 },
         { id: 's5', label: 'דברו איתנו',
-          still: 'assets/scene5-still.webp', poster: 'assets/leg5-poster.webp', posterMobile: 'assets/leg5-poster-m.webp',
-          clip: 'assets/vid/leg5.mp4', clipMobile: 'assets/vid/leg5-m.mp4',
+          still: 'assets/scene5-still.webp?v=3', stillMobile: 'assets/scene5-still-m.webp?v=3',
+          poster: 'assets/leg5-poster.webp?v=3', posterMobile: 'assets/leg5-poster-m.webp?v=3',
+          clip: 'assets/vid/leg5.mp4?v=3', clipMobile: 'assets/vid/leg5-m.mp4?v=3',
           accent: '#E4603F', scroll: 1.9, linger: 0.3 },
       ],
       connectors: [],   // seams are frame-continuous — dives crossfade directly
     };
+    // Phones: shorter track — thumb-scroll economy. Same story, ~35% fewer swipes.
+    if (Math.min(screen.width, screen.height) <= 600) {
+      CFG.sections.forEach(function (s) { s.scroll *= 0.62; s.linger *= 0.75; });
+      CFG.diveScroll = 1.0;
+    }
     mountScrollWorld(document.getElementById('world'), CFG);
 
     // Posters are ~25-115KB webp each and are the visual floor of every scene —
@@ -691,6 +708,7 @@
       function apply() {
         ticking = false;
         var y = window.scrollY || window.pageYOffset;
+        var copyOpMax = 0;                                 // drives the mobile copy scrim
         for (var i = 0; i < N; i++) {
           var seg = CFG.sections[i] && CFG.sections[i]._seg;
           var el = blocks[i];
@@ -732,6 +750,7 @@
             if (op > 0.02) blockOn = true;
           }
           el.style.opacity = blockOn ? 1 : 0;
+          if (leadOp > copyOpMax) copyOpMax = leadOp;
           el.classList.toggle('copy-on', leadOp > 0.5);    // draws the marker highlights
           el.style.pointerEvents =
             ((i === 0 && pr < 0.55) || (i === N - 1 && pr > 0.35)) ? 'auto' : 'none';
@@ -762,6 +781,10 @@
         }
         var veil = document.querySelector('.demo-veil');
         if (veil) veil.style.opacity = (mob ? veilOp * 0.85 : 0).toFixed(3);
+        // phone copy scrim: soft white wash behind the text zone whenever copy is on,
+        // so the type never fights the (now much closer) agents.
+        var scrim = document.querySelector('.copy-scrim');
+        if (scrim) scrim.style.opacity = (mob ? copyOpMax : 0).toFixed(3);
       }
       function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(apply); } }
       window.addEventListener('scroll', onScroll, { passive: true });
