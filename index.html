@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>b.a.t — תתרגלו שמישהו עושה בשבילכם את העבודה</title>
+  <meta name="description" content="b.a.t — מערכות ניהול מותאמות אישית, סוכני AI ואוטומציות עסקיות, אתרים מעוצבים ברמה הגבוהה ביותר, וטיפול שוטף בכל הצד הטכנולוגי של העסק. כעת הכל אפשרי." />
+  <meta property="og:title" content="b.a.t — תתרגלו שמישהו עושה בשבילכם את העבודה" />
+  <meta property="og:description" content="מערכות ניהול מותאמות אישית, סוכני AI, וטיפול שוטף בכל הטכנולוגיה של העסק. כעת הכל אפשרי." />
+  <meta property="og:type" content="website" />
+  <!-- SITE_URL: עדכון אחד כאן כשעוברים לדומיין קבוע -->
+  <meta property="og:url" content="https://studio139.github.io/web-bta/" />
+  <meta property="og:image" content="https://studio139.github.io/web-bta/assets/og-share.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="he_IL" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://studio139.github.io/web-bta/" />
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "b.a.t",
+    "description": "מערכות ניהול מותאמות אישית, סוכני AI, אוטומציות עסקיות, אתרים מעוצבים וטיפול שוטף בכל הצד הטכנולוגי של העסק.",
+    "telephone": "+972-50-694-6463",
+    "areaServed": "IL"
+  }
+  </script>
+  <style>
+    /* ---------- Theme tokens (win over the engine's @layer defaults) ---------- */
+    :root, .sw-root {
+      --sw-bg: #FCFBFA;                /* deep polished white — matches the film's grade */
+      --sw-ink: #2A2B33;
+      --sw-ink-soft: #6a6b74;
+      --sw-accent: #E4603F;            /* the single coral accent */
+      --sw-font-display: 'Assistant', 'Segoe UI', system-ui, sans-serif;
+      --sw-font-body: 'Assistant', 'Segoe UI', system-ui, sans-serif;
+      --coral: #E4603F;
+      --coral-soft: #F08165;
+      --ink: #2A2B33;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html, body { margin: 0; background: var(--sw-bg); font-family: var(--sw-font-body); }
+
+    /* ---------- Engine adjustments for the white world ---------- */
+    .sw-particles, .sw-copylayer { display: none; }          /* our own text layer instead */
+    .sw-scrollbar { background: rgba(42,43,51,.06); }
+    .sw-scrollbar span { transform-origin: 100% 50%; }       /* RTL: progress fills right→left */
+    .sw-hint { font-family: var(--sw-font-body); font-weight: 600; letter-spacing: .04em; text-transform: none; font-size: .8rem; }
+    .sw-route__label { font-family: var(--sw-font-body); }
+    .sw-route::before { background: var(--ink); opacity: .12; }
+    .sw-route__dot i { background: rgba(42,43,51,.22); }
+    .sw-route__dot:hover i { background: rgba(42,43,51,.5); }
+    .sw-route__dot.is-active i { background: var(--coral); box-shadow: 0 0 0 5px rgba(228,96,63,.14); }
+
+    /* ---------- Logo — top-left (explicit user directive), restrained ---------- */
+    .site-logo {
+      position: fixed; top: clamp(14px, 2.2vw, 26px); left: clamp(16px, 3vw, 40px); z-index: 70;
+      width: clamp(106px, 9.8vw, 160px); display: block;
+      opacity: 0; animation: logo-in 1s var(--ease-out-expo) .3s forwards;
+      /* multiply blends the logo's white ground into the white world (the dedicated
+         transparent logo file is defective — its charcoal wordmark was stripped).
+         Must live on the fixed anchor: on the inner img it would only blend against
+         the anchor's own (transparent) backdrop. */
+      mix-blend-mode: multiply;
+    }
+    .site-logo img { width: 100%; height: auto; display: block; }
+    @keyframes logo-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+    /* ---------- Film text layer (DESIGN.md binding spec) ---------- */
+    .film-copy { position: fixed; inset: 0; z-index: 30; pointer-events: none; }
+    .scene-copy { position: absolute; opacity: 0; will-change: opacity, transform; }
+    .scene-copy > * { will-change: opacity, transform; }
+    .scene-copy h1, .scene-copy h2 {
+      margin: 0; font-family: var(--sw-font-display); font-weight: 800;
+      color: rgba(42,43,51,.96);                    /* strong ink — never pure black */
+      line-height: 1.08; letter-spacing: 0;
+      /* NO text-shadow halo: shadows paint OVER inline backgrounds and washed out
+         the marker highlights around the glyphs (looked like partial coverage) */
+    }
+    .scene-copy p {
+      margin: .85em 0 0; font-weight: 600; color: rgba(42,43,51,.8); line-height: 1.55;
+    }
+    .scene-copy h1 { font-size: clamp(2.7rem, 6.6vw, 5.8rem); }
+    .scene-copy h2 { font-size: clamp(2.2rem, 4.7vw, 3.9rem); }
+    .scene-copy p  { font-size: clamp(1.15rem, 1.75vw, 1.55rem); }
+
+    /* animated marker-highlight on key phrases — draws (RTL: from the right) when
+       the block enters; scroll-mapped entrance, time-eased draw */
+    .hl {
+      font-style: normal; font-weight: 800; color: rgba(42,43,51,.96);
+      background-image: linear-gradient(0deg, rgba(240,129,101,.36), rgba(240,129,101,.36));
+      background-repeat: no-repeat;
+      /* block behind the whole word, but hugging the glyphs: the font's em-box is much
+         taller than Hebrew letters, so 100% height reads oversized — use a fixed .95em
+         band anchored just under the baseline instead */
+      background-size: 0% .95em;
+      background-position: right 0 bottom .08em;   /* sweeps in from the right (RTL) */
+      transition: background-size .9s var(--ease-out-expo) .35s;
+      box-decoration-break: clone; -webkit-box-decoration-break: clone;
+      padding: 0 .1em;
+      margin-inline: -.1em;                        /* padding without shifting the layout */
+      border-radius: .1em;
+    }
+    .scene-copy.copy-on .hl { background-size: 100% .95em; }
+    .scene-copy.copy-on p .hl { transition-delay: .6s; }
+    @media (prefers-reduced-motion: reduce) { .hl { transition: none; background-size: 100% .34em; } }
+
+    /* per-scene placement = the empty area of each frame */
+    .copy-s1 { top: 22%; left: 50%; width: min(90vw, 980px); transform: translateX(-50%); text-align: center; }
+    .copy-s1 p { margin-inline: auto; max-width: 32em; }
+    .copy-s2 { top: 12vh; right: 6vw; width: min(45vw, 620px); text-align: start; }
+    .copy-s3 { top: 20vh; right: 7vw; width: min(46vw, 640px); text-align: start; }
+    .copy-s4 { top: 15vh; left: 6vw; width: min(43vw, 580px); text-align: start; }
+    .copy-s5 { top: 9vh; left: 50%; width: min(92vw, 900px); transform: translateX(-50%); text-align: center; }
+    .copy-s5 p { margin-inline: auto; max-width: 30em; }
+
+    /* ---------- CTA blocks (hero + finale) ---------- */
+    .copy-cta { margin-top: 30px; display: flex; gap: 16px; justify-content: center; align-items: center; flex-wrap: wrap; pointer-events: auto; }
+    .btn-primary, .btn-wa {
+      display: inline-flex; align-items: center; gap: 12px; text-decoration: none; cursor: pointer; border: 0;
+      font: 800 1.15rem var(--sw-font-body); color: #fff;
+      background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+      padding: 17px 42px; border-radius: 999px;
+      box-shadow: 0 12px 32px rgba(228,96,63,.32), inset 0 1px 0 rgba(255,255,255,.25);
+      transition: transform .45s var(--ease-out-expo), box-shadow .45s var(--ease-out-expo);
+    }
+    .btn-primary:hover, .btn-wa:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(228,96,63,.42), inset 0 1px 0 rgba(255,255,255,.25); }
+    /* the finale WhatsApp CTA wears WhatsApp green (recognition > purity; documented deviation) */
+    .btn-wa {
+      background: linear-gradient(135deg, #25D366, #149E52);
+      box-shadow: 0 12px 32px rgba(30,160,90,.35), inset 0 1px 0 rgba(255,255,255,.25);
+    }
+    .btn-wa:hover { box-shadow: 0 18px 40px rgba(30,160,90,.45), inset 0 1px 0 rgba(255,255,255,.25); }
+    .btn-wa svg, .btn-phone svg { width: 22px; height: 22px; flex: 0 0 auto; }
+    .btn-phone {
+      display: inline-flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer;
+      font: 700 1.1rem var(--sw-font-body); color: rgba(42,43,51,.88);
+      background: rgba(255,255,255,.92); border: 1px solid rgba(42,43,51,.1);
+      padding: 16px 34px; border-radius: 999px; backdrop-filter: blur(8px);
+      box-shadow: 0 8px 24px rgba(42,43,51,.1);
+      transition: transform .45s var(--ease-out-expo), box-shadow .45s var(--ease-out-expo), border-color .3s;
+    }
+    .btn-phone:hover { transform: translateY(-3px); border-color: rgba(228,96,63,.4); box-shadow: 0 12px 30px rgba(42,43,51,.15); }
+    .btn-phone svg { color: var(--coral); }
+    .cta-micro { margin-top: 16px !important; font-size: .98rem !important; font-weight: 600 !important; color: rgba(42,43,51,.55) !important; }
+
+    /* ---------- Live demo cards (scenes 2+3) ---------- */
+    .scene-demo { position: absolute; opacity: 0; will-change: opacity, transform; }
+    .demo-s2 { top: 11vh; left: 4.5vw; width: min(34vw, 470px); }
+    .demo-s3 { top: 13vh; left: 4.5vw; width: min(30vw, 400px); }  /* opposite the copy, like scene 2 */
+    /* phones: a soft white veil behind an active demo card calms the film under it */
+    .demo-veil { position: fixed; inset: 0; z-index: 29; background: var(--sw-bg); opacity: 0; pointer-events: none; }
+    .demo-card {
+      background: rgba(255,255,255,.97); border: 1px solid rgba(42,43,51,.08);
+      border-radius: 16px; overflow: hidden; text-align: start;
+      box-shadow: 0 26px 70px rgba(42,43,51,.16);
+    }
+    .demo-card .reveal { opacity: 0; transform: translateY(10px); transition: opacity .5s var(--ease-out-expo), transform .5s var(--ease-out-expo); }
+    .demo-card .reveal.on { opacity: 1; transform: none; }
+    .demo-card svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .win-bar { display: flex; align-items: center; gap: 6px; padding: 9px 14px; background: #F7F5F2; border-bottom: 1px solid rgba(42,43,51,.06); }
+    .win-bar b { width: 9px; height: 9px; border-radius: 50%; background: rgba(42,43,51,.12); }
+    .win-bar b.c { background: #F08165; }
+    .win-title { font-size: .72rem; font-weight: 600; color: rgba(42,43,51,.45); margin-inline-start: 6px; }
+    .dash-body { display: flex; }
+    .dash-rail { border-inline-end: 1px solid rgba(42,43,51,.06); padding: 14px 11px; display: flex; flex-direction: column; gap: 15px; }
+    .dash-rail svg { width: 16px; height: 16px; color: rgba(42,43,51,.3); display: block; }
+    .dash-rail svg.on { color: var(--coral); }
+    .dash-main { flex: 1; min-width: 0; padding: 13px 15px 15px; }
+    .dash-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .dash-top h4 { margin: 0; font-size: 1rem; font-weight: 800; color: rgba(42,43,51,.92); }
+    .dash-top .sub { display: block; font-size: .68rem; font-weight: 600; color: rgba(42,43,51,.45); }
+    .dash-date { font-size: .66rem; font-weight: 600; color: rgba(42,43,51,.42); white-space: nowrap; }
+    .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 10px; }
+    .kpi { background: #F8F6F3; border-radius: 10px; padding: 7px 9px; min-width: 0; }
+    .kpi .lbl { display: flex; align-items: center; gap: 4px; font-size: .62rem; font-weight: 600; color: rgba(42,43,51,.45); white-space: nowrap; }
+    .kpi .lbl svg { width: 11px; height: 11px; flex: 0 0 auto; }
+    .kpi .val { font-size: 1.05rem; font-weight: 800; color: rgba(42,43,51,.92); margin-top: 2px; white-space: nowrap; }
+    .kpi .dlt { display: block; font-size: .6rem; font-weight: 700; color: var(--coral); margin-top: 1px; }
+    .kpi .dlt.mut { color: rgba(42,43,51,.4); }
+    .chartbox { margin-top: 11px; }
+    .chartbox .cap { display: flex; justify-content: space-between; align-items: center; }
+    .chartbox .cap .t { font-size: .72rem; font-weight: 700; color: rgba(42,43,51,.8); }
+    .chartbox .cap .rng { font-size: .6rem; font-weight: 600; color: rgba(42,43,51,.42); border: 1px solid rgba(42,43,51,.1); border-radius: 999px; padding: 2px 8px; }
+    .chartbox svg { width: 100%; height: 64px; display: block; margin-top: 4px; stroke: none; }
+    .chartbox polyline { stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1.4s cubic-bezier(.3,0,.2,1) .3s; }
+    .demo-on .chartbox polyline { stroke-dashoffset: 0; }
+    .chartbox .tip { opacity: 0; transition: opacity .45s var(--ease-out-expo) 1.5s; }
+    .demo-on .chartbox .tip { opacity: 1; }
+    .tasks { margin-top: 9px; border-top: 1px solid rgba(42,43,51,.07); padding-top: 7px; }
+    .tasks .cap2 { font-size: .72rem; font-weight: 700; color: rgba(42,43,51,.8); margin: 0; }
+    .task { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; }
+    .task p { margin: 0; display: flex; align-items: center; gap: 6px; font-size: .73rem; font-weight: 600; color: rgba(42,43,51,.78); }
+    .task p svg { width: 13px; height: 13px; color: var(--coral); flex: 0 0 auto; }
+    .pill { font-size: .6rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+    .pill.ok { background: #E2F5EE; color: #1D8A6E; }
+    .pill.att { background: #FAECE7; color: #B0451F; }
+
+    .chat-head { display: flex; align-items: center; gap: 10px; background: #075E54; padding: 9px 12px; }
+    .chat-head img { width: 34px; height: 34px; border-radius: 50%; background: #fff; display: block; }
+    .chat-head .who p { margin: 0; font-size: .8rem; font-weight: 700; color: #fff; }
+    .chat-head .who span { font-size: .62rem; font-weight: 600; color: #A8D5CD; }
+    .chat-head > svg { width: 15px; height: 15px; color: #A8D5CD; margin-inline-start: auto; }
+    .chat-body { background: #EFE7DD; padding: 11px 11px 9px; }
+    .bub { max-width: 88%; border-radius: 11px; padding: 7px 10px; margin-top: 7px; box-shadow: 0 1px 1px rgba(42,43,51,.08); }
+    .bub p { margin: 0; font-size: .78rem; font-weight: 500; line-height: 1.5; color: #1D2129; }
+    .bub .meta { display: flex; justify-content: flex-end; align-items: center; gap: 3px; margin-top: 2px; font-size: .58rem; font-weight: 600; color: rgba(42,43,51,.4); }
+    .bub .meta svg { width: 12px; height: 12px; color: #4FB6EC; }
+    .bub.me { background: #DCF6C9; margin-inline-start: auto; border-end-end-radius: 3px; }
+    .bub.ai { background: #fff; border-end-start-radius: 3px; }
+    .bub .file { display: flex; align-items: center; gap: 6px; background: #F5F2ED; border-radius: 8px; padding: 6px 8px; margin-top: 6px; }
+    .bub .file svg { width: 15px; height: 15px; color: #075E54; flex: 0 0 auto; }
+    .bub .file span { font-size: .7rem; font-weight: 600; color: rgba(42,43,51,.8); }
+    .typing { display: inline-flex; gap: 3px; background: #fff; border-radius: 11px; border-end-start-radius: 3px; padding: 10px 11px; margin-top: 7px; box-shadow: 0 1px 1px rgba(42,43,51,.08); opacity: 0; transition: opacity .3s; }
+    .typing i { width: 5px; height: 5px; border-radius: 50%; background: rgba(42,43,51,.3); animation: tp 1s infinite; }
+    .typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+    @keyframes tp { 0%,60%,100% { transform: none; opacity: .4; } 30% { transform: translateY(-3px); opacity: 1; } }
+    .chat-in { display: flex; align-items: center; gap: 8px; background: #F7F5F2; padding: 8px 12px; }
+    .chat-in .field { flex: 1; background: #fff; border: 1px solid rgba(42,43,51,.07); border-radius: 999px; padding: 7px 12px; font-size: .7rem; font-weight: 600; color: rgba(42,43,51,.35); }
+    .chat-in svg { width: 16px; height: 16px; color: rgba(42,43,51,.35); }
+
+    /* ---------- Floating contact cluster ---------- */
+    .contact-dock {
+      position: fixed; bottom: clamp(18px, 3vh, 30px); left: clamp(16px, 2.6vw, 32px); z-index: 80;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      opacity: 0; animation: logo-in 1s var(--ease-out-expo) .8s forwards;
+    }
+    .dock-btn {
+      width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+      background: rgba(255,255,255,.92); color: var(--ink);
+      border: 1px solid rgba(42,43,51,.1);
+      box-shadow: 0 6px 20px rgba(42,43,51,.08);
+      backdrop-filter: blur(8px); text-decoration: none; cursor: pointer;
+      transition: transform .45s var(--ease-out-expo), box-shadow .45s var(--ease-out-expo), color .3s, border-color .3s;
+    }
+    .dock-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(42,43,51,.13); color: var(--coral); border-color: rgba(228,96,63,.35); }
+    .dock-btn svg { width: 23px; height: 23px; display: block; }
+    .dock-cta {
+      border: 0; cursor: pointer; font: 800 .98rem var(--sw-font-body); color: #fff;
+      background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+      padding: 14px 26px; border-radius: 999px; white-space: nowrap;
+      box-shadow: 0 10px 26px rgba(228,96,63,.32), inset 0 1px 0 rgba(255,255,255,.25);
+      transition: transform .45s var(--ease-out-expo), box-shadow .45s var(--ease-out-expo);
+    }
+    .dock-cta:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(228,96,63,.38); }
+
+    /* ---------- Contact banner ---------- */
+    .contact-banner {
+      position: fixed; bottom: clamp(88px, 12vh, 110px); left: clamp(16px, 2.6vw, 32px); z-index: 90;
+      width: min(88vw, 340px); background: rgba(255,255,255,.97); backdrop-filter: blur(12px);
+      border: 1px solid rgba(42,43,51,.08); border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(42,43,51,.16);
+      padding: 26px 26px 22px;
+      opacity: 0; transform: translateY(14px); pointer-events: none;
+      transition: opacity .45s var(--ease-out-expo), transform .45s var(--ease-out-expo);
+    }
+    .contact-banner.is-open { opacity: 1; transform: none; pointer-events: auto; }
+    .contact-banner h3 { margin: 0; font: 800 1.5rem var(--sw-font-display); color: rgba(42,43,51,.92); }
+    .contact-banner .sub { margin: 6px 0 18px; font-size: .95rem; font-weight: 600; color: rgba(42,43,51,.55); line-height: 1.5; }
+    .banner-row {
+      display: flex; align-items: center; gap: 12px; text-decoration: none;
+      padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(42,43,51,.08);
+      color: var(--ink); margin-top: 10px;
+      transition: border-color .3s, background .3s, transform .45s var(--ease-out-expo);
+    }
+    .banner-row:hover { border-color: rgba(228,96,63,.4); background: rgba(228,96,63,.04); transform: translateY(-1px); }
+    .banner-row svg { width: 20px; height: 20px; flex: 0 0 auto; color: var(--coral); }
+    .banner-row .lbl { font-size: .82rem; font-weight: 600; color: rgba(42,43,51,.5); display: block; }
+    .banner-row .val { font-size: 1.02rem; font-weight: 700; color: rgba(42,43,51,.88); }
+    .lead-form { margin: 4px 0 14px; }
+    .lead-form .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .lead-form input[type="text"], .lead-form input[type="tel"], .lead-form input[type="email"] {
+      width: 100%; box-sizing: border-box; margin-top: 8px;
+      font: 600 .92rem var(--sw-font-body); color: rgba(42,43,51,.88);
+      background: #FAF9F7; border: 1px solid rgba(42,43,51,.1); border-radius: 10px;
+      padding: 11px 12px; outline: none;
+      transition: border-color .3s, background .3s, box-shadow .3s;
+    }
+    .lead-form input::placeholder { color: rgba(42,43,51,.38); font-weight: 600; }
+    .lead-form input:focus { border-color: rgba(228,96,63,.55); background: #fff; box-shadow: 0 0 0 3px rgba(228,96,63,.1); }
+    .lead-consent { display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; cursor: pointer; }
+    .lead-consent input { accent-color: var(--coral); margin-top: 2px; cursor: pointer; }
+    .lead-consent span { font-size: .78rem; font-weight: 600; color: rgba(42,43,51,.55); line-height: 1.45; }
+    .lead-submit {
+      width: 100%; margin-top: 12px; border: 0; cursor: pointer;
+      font: 800 1rem var(--sw-font-body); color: #fff;
+      background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+      padding: 13px 20px; border-radius: 999px;
+      box-shadow: 0 10px 24px rgba(228,96,63,.3), inset 0 1px 0 rgba(255,255,255,.25);
+      transition: transform .45s var(--ease-out-expo), box-shadow .45s var(--ease-out-expo);
+    }
+    .lead-submit:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(228,96,63,.38), inset 0 1px 0 rgba(255,255,255,.25); }
+    .lead-sent { display: none; margin: 8px 0 0; font-size: .82rem; font-weight: 700; color: #1D8A6E; }
+    .lead-sent.show { display: block; }
+    .lead-err { display: none; margin: 8px 0 0; font-size: .82rem; font-weight: 700; color: #C4432B; }
+    .lead-err.show { display: block; }
+    .lead-submit:disabled { opacity: .65; cursor: default; transform: none; }
+    .lead-or { display: flex; align-items: center; gap: 10px; margin: 14px 0 4px; color: rgba(42,43,51,.35); font-size: .72rem; font-weight: 700; }
+    .lead-or::before, .lead-or::after { content: ""; flex: 1; height: 1px; background: rgba(42,43,51,.08); }
+    .banner-close {
+      position: absolute; top: 12px; inset-inline-end: 12px; width: 32px; height: 32px;
+      border: 0; background: transparent; cursor: pointer; border-radius: 50%;
+      display: grid; place-items: center; color: rgba(42,43,51,.45);
+      transition: background .3s, color .3s;
+    }
+    .banner-close:hover { background: rgba(42,43,51,.06); color: var(--ink); }
+    .banner-close svg { width: 15px; height: 15px; }
+
+    /* ---------- Mobile ---------- */
+    @media (max-width: 700px) {
+      /* phones: ALL copy anchors to one consistent top slot (below the logo) —
+         the portrait crop keeps the film's action center/bottom, so text and
+         scene never fight (user directive, 2026-07-17) */
+      .copy-s1 { top: 13vh; width: 92vw; }
+      .copy-s2, .copy-s3, .copy-s4 {
+        top: 12vh; bottom: auto; right: auto; left: 50%; transform: translateX(-50%);
+        width: min(92vw, 560px); text-align: center;
+      }
+      /* demo cards take over the same top slot on the scene's second beat */
+      .demo-s2, .demo-s3 { top: 12vh; left: 4vw; right: 4vw; width: auto; }
+      .demo-card { border-radius: 14px; }
+      .dash-rail { display: none; }
+      .kpi .val { font-size: .95rem; }
+      .chartbox svg { height: 52px; }
+      .bub p { font-size: .75rem; }
+      .copy-s2 p, .copy-s3 p, .copy-s4 p { margin-inline: auto; max-width: 30em; }
+      .copy-s5 { top: 9vh; width: 94vw; }
+      .scene-copy h1 { font-size: clamp(2.3rem, 10vw, 3.1rem); }
+      .scene-copy h2 { font-size: clamp(1.9rem, 8vw, 2.5rem); }
+      .scene-copy p  { font-size: clamp(1.08rem, 4.6vw, 1.25rem); }
+      .btn-wa, .btn-primary { font-size: 1.08rem; padding: 16px 34px; }
+      .btn-phone { font-size: 1.02rem; padding: 14px 28px; }
+      .site-logo { width: 98px; }
+      /* phones: the dock becomes one low horizontal row so scene copy never collides with it */
+      .contact-dock { flex-direction: row-reverse; gap: 10px; bottom: calc(14px + env(safe-area-inset-bottom)); }
+      .dock-btn { width: 46px; height: 46px; }
+      .dock-btn svg { width: 21px; height: 21px; }
+      .dock-cta { padding: 13px 22px; }
+      .contact-banner { bottom: calc(78px + env(safe-area-inset-bottom)); }
+      .sw-route { display: none; }   /* keep phone edges clean */
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .site-logo, .contact-dock { animation: none; opacity: 1; }
+      .contact-banner, .dock-btn, .dock-cta, .btn-primary, .banner-row { transition: none; }
+    }
+
+    /* SEO block stays invisible even before the engine hides it (no flash) */
+    [data-sw-seo] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  </style>
+</head>
+<body>
+  <div id="top"></div>
+
+  <!-- Logo — top-left, restrained (user directive) -->
+  <a class="site-logo" href="#top" aria-label="b.a.t — לדף הבית">
+    <img src="assets/bat-logo.webp" alt="b.a.t" width="480" height="320" />
+  </a>
+
+  <div id="world">
+    <!-- Static crawlable copy; the engine hides it on mount -->
+    <section data-sw-seo>
+      <h1>תתרגלו שמישהו עושה בשבילכם את העבודה.</h1>
+      <p>מערכת ניהול שנתפרת בדיוק לעסק שלכם, סוכני <bdi>AI</bdi> שעובדים בשבילכם, אתר מעוצב שאי אפשר להתעלם ממנו — וכל הצד הטכנולוגי? עלינו.</p>
+      <h2>מערכת ניהול. מותאמת אישית. באמת.</h2>
+      <p>לא אתם מתאימים את עצמכם לתוכנה — היא נבנית סביב איך שאתם עובדים, עם אוטומציות עסקיות שחוסכות לכם שעות כל יום. והיא לא עומדת במקום: אנחנו משדרגים אותה כל הזמן — והעסק שלכם גדל איתה.</p>
+      <h2>והצוות הזה? סוכני <bdi>AI</bdi> שעובדים בשבילכם.</h2>
+      <p>מיילים, הצעות מחיר, מעקבים, סדר משימות — עובדים דיגיטליים שלומדים את העסק שלכם ופשוט מבצעים. זמינים 24/7, לא מפספסים אף לקוח.</p>
+      <h2>מה יוצא לכם מזה? זמן, סדר בראש — וכסף.</h2>
+      <p>עסק שמתייעל, חוסך ומרוויח יותר — גם כשאתם עסוקים בדברים החשובים באמת. לקוחות שלנו חוסכים עשרות אלפי שקלים בזכות המערכות. כל דבר טכנולוגי, מהאתר ועד המערכות — בטיפול שלנו.</p>
+      <h2>אנחנו <bdi>b.a.t</bdi> — כעת הכל אפשרי.</h2>
+      <p>אתרים מעוצבים, מערכות ניהול, סוכני <bdi>AI</bdi> ואוטומציות — מקימים, מתחזקים ומשדרגים את הכל ברמה הגבוהה ביותר, כדי שהעסק שלכם רק יגדל.</p>
+      <p><a href="https://wa.me/972506946463">דברו איתנו בוואטסאפ</a> · <a href="tel:0506946463">התקשרו: 050-694-6463</a></p>
+    </section>
+  </div>
+
+  <div class="demo-veil" aria-hidden="true"></div>
+
+  <!-- Film text layer — scroll-mapped, above the video -->
+  <div class="film-copy" aria-hidden="false">
+    <div class="scene-copy copy-s1">
+      <h1>תתרגלו שמישהו עושה <span class="hl">בשבילכם</span> את העבודה.</h1>
+      <p>מערכת ניהול שנתפרת <span class="hl">בדיוק לעסק שלכם</span>, סוכני <bdi>AI</bdi> שעובדים בשבילכם, אתר מעוצב שאי אפשר להתעלם ממנו — וכל הצד הטכנולוגי? <span class="hl">עלינו.</span></p>
+      <div class="copy-cta">
+        <button class="btn-primary" type="button" data-open-contact>בוא נדבר</button>
+      </div>
+      <p class="cta-micro">שיחת היכרות קצרה · בלי התחייבות</p>
+    </div>
+    <div class="scene-copy copy-s2">
+      <h2>מערכת ניהול. <span class="hl">מותאמת אישית.</span> באמת.</h2>
+      <p>לא אתם מתאימים את עצמכם לתוכנה — היא נבנית <span class="hl">סביב איך שאתם עובדים</span>, עם אוטומציות עסקיות שחוסכות לכם שעות כל יום. והיא לא עומדת במקום: אנחנו <span class="hl">משדרגים אותה כל הזמן</span> — והעסק שלכם גדל איתה.</p>
+    </div>
+    <div class="scene-copy copy-s3">
+      <h2>והצוות הזה? סוכני <bdi>AI</bdi> <span class="hl">שעובדים בשבילכם.</span></h2>
+      <p>מיילים, הצעות מחיר, מעקבים, סדר משימות — עובדים דיגיטליים שלומדים את העסק שלכם <span class="hl">ופשוט מבצעים</span>. זמינים <bdi>24/7</bdi>, לא מפספסים אף לקוח.</p>
+    </div>
+    <div class="scene-copy copy-s4">
+      <h2>מה יוצא לכם מזה? <span class="hl">זמן, סדר בראש — וכסף.</span></h2>
+      <p>עסק שמתייעל, חוסך ומרוויח יותר — גם כשאתם עסוקים בדברים החשובים באמת. לקוחות שלנו חוסכים <span class="hl">עשרות אלפי שקלים</span> בזכות המערכות. כל דבר טכנולוגי, מהאתר ועד המערכות — <span class="hl">בטיפול שלנו.</span></p>
+    </div>
+    <div class="scene-copy copy-s5">
+      <h2>אנחנו <bdi>b.a.t</bdi> — <span class="hl">כעת הכל אפשרי.</span></h2>
+      <p>אתרים מעוצבים, מערכות ניהול, סוכני <bdi>AI</bdi> ואוטומציות — מקימים, מתחזקים ומשדרגים את הכל ברמה הגבוהה ביותר, כדי שהעסק שלכם רק יגדל.</p>
+      <div class="copy-cta">
+        <a class="btn-wa" href="https://wa.me/972506946463" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2.05 22l5.3-1.39a9.87 9.87 0 0 0 4.69 1.19h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.65-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.16 8.16 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.13-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-2-1.23-.73-.66-1.23-1.47-1.38-1.72-.14-.24-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.6.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29z"/></svg>
+          <span>דברו איתנו בוואטסאפ</span>
+        </a>
+        <a class="btn-phone" href="tel:0506946463">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span><bdi dir="ltr">050-694-6463</bdi></span>
+        </a>
+      </div>
+      <p class="cta-micro">מענה מהיר ואנושי · בלי התחייבות</p>
+    </div>
+
+    <!-- Scene 2 live demo — the management system, as a real app window -->
+    <div class="scene-demo demo-s2" aria-label="הדגמה: לוח הניהול">
+      <div class="demo-card">
+        <div class="win-bar"><b class="c"></b><b></b><b></b><span class="win-title">המערכת של יעל</span></div>
+        <div class="dash-body">
+          <div class="dash-rail">
+            <svg class="on" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.8 3.1-6 7-6s7 2.2 7 6"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-6M22 20H2"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg>
+          </div>
+          <div class="dash-main">
+            <div class="dash-top reveal" data-d="100">
+              <div><h4>בוקר טוב, יעל</h4><span class="sub">כך נראה העסק שלך הבוקר</span></div>
+              <span class="dash-date">יום רביעי · 17 ביולי</span>
+            </div>
+            <div class="kpis">
+              <div class="kpi reveal" data-d="280">
+                <span class="lbl"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.8 3.1-6 7-6s7 2.2 7 6"/></svg>לידים חדשים</span>
+                <div class="val"><span class="cnt" data-v="8" data-d2="380">0</span><span class="dlt">4+ מאתמול</span></div>
+              </div>
+              <div class="kpi reveal" data-d="400">
+                <span class="lbl"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v4h4"/></svg>הצעות פתוחות</span>
+                <div class="val"><span class="cnt" data-v="12" data-d2="500">0</span><span class="dlt mut">₪96,400</span></div>
+              </div>
+              <div class="kpi reveal" data-d="520">
+                <span class="lbl"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9 15V9l3 3 3-3v6"/></svg>התקבל החודש</span>
+                <div class="val"><span class="cnt" data-v="48200" data-pre="₪" data-d2="620">0</span><span class="dlt">12%+</span></div>
+              </div>
+            </div>
+            <div class="chartbox reveal" data-d="650">
+              <div class="cap"><span class="t">ביצועים</span><span class="rng">30 ימים</span></div>
+              <svg viewBox="0 0 300 70" preserveAspectRatio="none" aria-hidden="true">
+                <polyline pathLength="100" points="2,60 45,58 88,55 130,50 172,52 214,44 256,40 298,34" stroke="#F5C4B3" stroke-width="2" fill="none"/>
+                <polyline pathLength="100" points="2,55 45,48 88,52 130,38 172,42 214,26 256,20 298,10" stroke="#D85A30" stroke-width="2.4" fill="none"/>
+                <g class="tip">
+                  <circle cx="214" cy="26" r="3.6" fill="#D85A30" stroke="#fff" stroke-width="1.6"/>
+                  <rect x="152" y="2" width="88" height="19" rx="5" fill="#2A2B33" stroke="none"/>
+                  <text x="196" y="15" text-anchor="middle" font-size="9.5" font-weight="600" fill="#FCFBFA" stroke="none" font-family="Assistant, sans-serif">‏₪9,200 השבוע</text>
+                </g>
+              </svg>
+            </div>
+            <div class="tasks">
+              <p class="cap2 reveal" data-d="900">נעשה בשבילך הבוקר</p>
+              <div class="task reveal" data-d="1050">
+                <p><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>14 מיילים מוינו וקיבלו מענה</p>
+                <span class="pill ok">הושלם</span>
+              </div>
+              <div class="task reveal" data-d="1230">
+                <p><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v4h4"/></svg>7 הצעות מחיר נשלחו לפי המחירון החדש</p>
+                <span class="pill ok">הושלם</span>
+              </div>
+              <div class="task reveal" data-d="1410">
+                <p><svg viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21a2.2 2.2 0 0 0 4 0"/></svg>2 הזמנות גדולות ממתינות לאישור שלך</p>
+                <span class="pill att">לתשומת לבך</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 3 live demo — the owner chats with the agent, WhatsApp-style -->
+    <div class="scene-demo demo-s3" aria-label="הדגמה: התכתבות עם הסוכן">
+      <div class="demo-card">
+        <div class="chat-head">
+          <img src="assets/agent-avatar.webp" alt="" width="128" height="128" />
+          <div class="who"><p>הסוכן של העסק</p><span>מקוון · עונה תוך שניות</span></div>
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div class="chat-body">
+          <div class="bub me reveal" data-d="150">
+            <p>בוקר טוב! תעבור בבקשה על כל הבקשות להצעת מחיר, תשלח לכולם הצעות לפי המחירון שלנו — ותתזכר את כל מי שלא ענה עד יום חמישי.</p>
+            <span class="meta">09:12 <svg viewBox="0 0 24 24"><path d="M1.5 13l4 4L14 8M9.5 13l4 4L22 8"/></svg></span>
+          </div>
+          <div class="typing" data-show="650" data-hide="1500"><i></i><i></i><i></i></div>
+          <div class="bub ai reveal" data-d="1500">
+            <p>בוצע! שלחתי לכולם הצעות מחיר לפי המחירון, ומי שלא יענה עד יום חמישי — יקבל ממני תזכורת.</p>
+            <span class="file"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v4h4"/></svg><span>סיכום — 7 הצעות שנשלחו.pdf</span></span>
+            <span class="meta">09:13</span>
+          </div>
+          <div class="bub ai reveal" data-d="2500">
+            <p>רק מזכיר — שתי הזמנות גדולות מחכות לאישורך.</p>
+            <span class="meta">09:13</span>
+          </div>
+        </div>
+        <div class="chat-in">
+          <span class="field">כתבו הודעה לסוכן…</span>
+          <svg viewBox="0 0 24 24"><path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zM6 11a6 6 0 0 0 12 0M12 17v4"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating contact cluster -->
+  <div class="contact-dock">
+    <a class="dock-btn" href="https://wa.me/972506946463" target="_blank" rel="noopener" aria-label="שלחו לנו הודעת וואטסאפ">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2.05 22l5.3-1.39a9.87 9.87 0 0 0 4.69 1.19h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.65-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.16 8.16 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.13-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-2-1.23-.73-.66-1.23-1.47-1.38-1.72-.14-.24-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.6.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29z"/></svg>
+    </a>
+    <a class="dock-btn" href="tel:0506946463" aria-label="חייגו אלינו: 050-694-6463">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    </a>
+    <button class="dock-cta" type="button" data-open-contact aria-haspopup="dialog" aria-expanded="false" aria-controls="contact-banner">צור קשר</button>
+  </div>
+
+  <!-- Contact banner -->
+  <div class="contact-banner" id="contact-banner" role="dialog" aria-label="פרטי יצירת קשר">
+    <button class="banner-close" type="button" data-close-contact aria-label="סגירה">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>בוא נדבר</h3>
+    <p class="sub">השאירו פרטים ונחזור אליכם בהקדם:</p>
+    <form class="lead-form" novalidate>
+      <div class="row2">
+        <input type="text" name="fname" placeholder="שם פרטי" autocomplete="given-name" required />
+        <input type="text" name="lname" placeholder="שם משפחה" autocomplete="family-name" />
+      </div>
+      <input type="tel" name="phone" placeholder="טלפון" autocomplete="tel" dir="rtl" required />
+      <input type="email" name="email" placeholder="אימייל" autocomplete="email" dir="rtl" />
+      <label class="lead-consent">
+        <input type="checkbox" name="consent" checked />
+        <span>אני מאשר/ת קבלת עדכונים ותוכן שיווקי מ־<bdi>b.a.t</bdi></span>
+      </label>
+      <button class="lead-submit" type="submit">שליחה</button>
+      <p class="lead-sent" role="status" aria-live="polite">תודה! הפרטים נשלחו — נחזור אליכם בהקדם.</p>
+      <p class="lead-err" role="alert" aria-live="assertive">משהו השתבש בשליחה — נסו שוב, או חייגו אלינו ישירות.</p>
+    </form>
+    <div class="lead-or">או ישירות</div>
+    <a class="banner-row" href="tel:0506946463">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span><span class="lbl">טלפון</span><span class="val"><bdi dir="ltr">050-694-6463</bdi></span></span>
+    </a>
+    <a class="banner-row" href="https://wa.me/972506946463" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2.05 22l5.3-1.39a9.87 9.87 0 0 0 4.69 1.19h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.65-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2zm0 18.1a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.16 8.16 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.13-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.25-.13-1.05-.39-2-1.23-.73-.66-1.23-1.47-1.38-1.72-.14-.24-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.6.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29z"/></svg>
+      <span><span class="lbl">וואטסאפ</span><span class="val">שלחו לנו הודעה</span></span>
+    </a>
+  </div>
+
+  <script>
+    // ---------- analytics (GA4) ----------
+    // GA_ID ריק = המדידה כבויה לגמרי (לא נטען שום סקריפט חיצוני).
+    // כשמתקבל Measurement ID מ-Google Analytics (בצורת G-XXXXXXXXXX) — מדביקים אותו כאן.
+    var GA_ID = '';
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    function track(name, params){ if (GA_ID) gtag('event', name, params || {}); }
+    if (GA_ID) {
+      var gs = document.createElement('script');
+      gs.async = true;
+      gs.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(gs);
+      gtag('js', new Date());
+      gtag('config', GA_ID, { anonymize_ip: true });
+    }
+    // קליקים על וואטסאפ / טלפון — בכל מקום בדף (דוק, פינאלה, באנר)
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (!a) return;
+      if (a.href.indexOf('wa.me') !== -1) track('whatsapp_click', { link_location: a.className || 'link' });
+      else if (a.href.indexOf('tel:') === 0) track('phone_click', { link_location: a.className || 'link' });
+    }, true);
+  </script>
+  <script src="scrub-engine.js"></script>
+  <script>
+    // ---------- scroll-world mount ----------
+    var CFG = {
+      hint: 'גללו',
+      nav: false,
+      atmosphere: false,
+      diveScroll: 1.35,
+      crossfade: 0.1,
+      sections: [
+        { id: 's1', label: 'הצוות',
+          still: 'assets/scene1-still.webp', poster: 'assets/leg1-poster.webp', posterMobile: 'assets/leg1-poster-m.webp',
+          clip: 'assets/vid/leg1.mp4', clipMobile: 'assets/vid/leg1-m.mp4',
+          accent: '#E4603F', scroll: 1.9, linger: 0.45 },
+        { id: 's2', label: 'המערכת',
+          still: 'assets/scene2-still.webp', poster: 'assets/leg2-poster.webp', posterMobile: 'assets/leg2-poster-m.webp',
+          clip: 'assets/vid/leg2.mp4', clipMobile: 'assets/vid/leg2-m.mp4',
+          accent: '#E4603F', scroll: 1.85, linger: 0.5 },
+        { id: 's3', label: 'הסוכנים',
+          still: 'assets/scene3-still.webp', poster: 'assets/leg3-poster.webp', posterMobile: 'assets/leg3-poster-m.webp',
+          clip: 'assets/vid/leg3.mp4', clipMobile: 'assets/vid/leg3-m.mp4',
+          accent: '#E4603F', scroll: 1.85, linger: 0.5 },
+        { id: 's4', label: 'התוצאה',
+          still: 'assets/scene4-still.webp', poster: 'assets/leg4-poster.webp', posterMobile: 'assets/leg4-poster-m.webp',
+          clip: 'assets/vid/leg4.mp4', clipMobile: 'assets/vid/leg4-m.mp4',
+          accent: '#E4603F', scroll: 1.85, linger: 0.5 },
+        { id: 's5', label: 'דברו איתנו',
+          still: 'assets/scene5-still.webp', poster: 'assets/leg5-poster.webp', posterMobile: 'assets/leg5-poster-m.webp',
+          clip: 'assets/vid/leg5.mp4', clipMobile: 'assets/vid/leg5-m.mp4',
+          accent: '#E4603F', scroll: 1.9, linger: 0.3 },
+      ],
+      connectors: [],   // seams are frame-continuous — dives crossfade directly
+    };
+    mountScrollWorld(document.getElementById('world'), CFG);
+
+    // Posters are ~25-115KB webp each and are the visual floor of every scene —
+    // load them eagerly (lazy-load also never fires in background/hidden tabs).
+    document.querySelectorAll('.sw-scene__still').forEach(function (img) {
+      img.loading = 'eager';
+      var s = img.src; img.src = ''; img.src = s;
+    });
+
+    // Guard: if the engine mounted while the viewport reported 0×0 (hidden pane /
+    // background tab), its layout is degenerate — re-trigger until it has real height.
+    (function ensureLayout(tries) {
+      var seg = CFG.sections[0]._seg;
+      if (seg && seg.end > seg.start) return;
+      window.dispatchEvent(new Event('resize'));
+      if (tries > 0) setTimeout(function () { ensureLayout(tries - 1); }, 250);
+    })(20);
+
+    // ---------- film text layer: scroll-mapped opacity/translate ----------
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var blocks = Array.prototype.slice.call(document.querySelectorAll('.scene-copy'));
+      var clamp = function (x) { return Math.min(1, Math.max(0, x)); };
+      var smooth = function (x) { x = clamp(x); return x * x * (3 - 2 * x); };
+      var N = blocks.length;
+      var ticking = false;
+      var mobileNow = function () { return window.innerWidth <= 700; };
+
+      // ---- live demo cards: scroll-mapped entrance + timed inner beats ----
+      var demoEls = [document.querySelector('.demo-s2'), document.querySelector('.demo-s3')];
+      var demoScene = [1, 2];
+      var demoState = [{ active: false, timers: [] }, { active: false, timers: [] }];
+      function fmt(n) { return n.toLocaleString('en-US'); }
+      function runDemo(el, st) {
+        st.timers.forEach(clearTimeout); st.timers = [];
+        el.classList.add('demo-on');
+        el.querySelectorAll('.reveal').forEach(function (n) {
+          var d = +(n.getAttribute('data-d') || 0);
+          if (reduce) { n.classList.add('on'); return; }
+          st.timers.push(setTimeout(function () { n.classList.add('on'); }, d));
+        });
+        el.querySelectorAll('.typing').forEach(function (t) {
+          if (reduce) { t.style.display = 'none'; return; }
+          t.style.display = ''; t.style.opacity = '0';
+          st.timers.push(setTimeout(function () { t.style.opacity = '1'; }, +t.getAttribute('data-show') || 0));
+          st.timers.push(setTimeout(function () { t.style.display = 'none'; }, +t.getAttribute('data-hide') || 0));
+        });
+        el.querySelectorAll('.cnt').forEach(function (c) {
+          var v = +c.getAttribute('data-v'), pre = c.getAttribute('data-pre') || '';
+          if (reduce) { c.textContent = pre + fmt(v); return; }
+          st.timers.push(setTimeout(function () {
+            var t0 = performance.now();
+            (function step(now) {
+              var p = Math.min(1, (now - t0) / 700); p = 1 - Math.pow(1 - p, 3);
+              c.textContent = pre + fmt(Math.round(v * p));
+              if (p < 1) requestAnimationFrame(step);
+            })(t0);
+          }, +(c.getAttribute('data-d2') || 300)));
+        });
+      }
+      function resetDemo(el, st) {
+        st.timers.forEach(clearTimeout); st.timers = [];
+        el.classList.remove('demo-on');
+        el.querySelectorAll('.reveal.on').forEach(function (n) { n.classList.remove('on'); });
+        el.querySelectorAll('.typing').forEach(function (t) { t.style.display = 'none'; t.style.opacity = '0'; });
+        el.querySelectorAll('.cnt').forEach(function (c) { c.textContent = '0'; });
+      }
+      demoEls.forEach(function (el, i) { if (el) resetDemo(el, demoState[i]); });
+
+      var sceneSeen = [];
+      function apply() {
+        ticking = false;
+        var y = window.scrollY || window.pageYOffset;
+        for (var i = 0; i < N; i++) {
+          var seg = CFG.sections[i] && CFG.sections[i]._seg;
+          var el = blocks[i];
+          if (!seg) continue;
+          var pr = clamp((y - seg.start) / (seg.end - seg.start));
+          if (y < seg.start) pr = 0; if (y > seg.end) pr = i === N - 1 ? 1 : 1.2;
+          if (i > 0 && pr > 0.15 && !sceneSeen[i]) {       // scroll-depth: once per scene per visit
+            sceneSeen[i] = true;
+            track('scene_reached', { scene: i + 1, percent_scrolled: Math.round(((i + 1) / N) * 100) });
+          }
+
+          var children = el.children;
+          var blockOn = false, leadOp = 0;
+          for (var k = 0; k < children.length; k++) {
+            var pk = pr - k * 0.03;                       // per-line stagger
+            var oIn, oOut;
+            if (i === 0) {                                 // hero: on at landing, long hold
+              oIn = 1;
+              oOut = 1 - smooth((pk - 0.6) / 0.25);
+            } else if (i === N - 1) {                      // finale: enters and holds
+              oIn = smooth((pk - 0.18) / 0.22);
+              oOut = 1;
+            } else if (mobileNow() && (i === 1 || i === 2)) {
+              // phone demo scenes: beat 1 = text (early), beat 2 = the demo card in its slot
+              oIn = smooth((pk - 0.05) / 0.13);
+              oOut = 1 - smooth((pk - 0.42) / 0.1);
+            } else {                                       // long dwell: on ~28%, off right at the seam
+              oIn = smooth((pk - 0.1) / 0.18);
+              oOut = 1 - smooth((pk - 0.86) / 0.13);
+            }
+            var op = Math.min(oIn, oOut);
+            if (k === 0) leadOp = op;
+            var rise = 18 * (1 - oIn);                     // enter: rise 18px
+            var exitUp = -14 * (1 - oOut);                 // exit: continue up
+            var drift = (0.5 - pr) * 8;                    // ~10% micro-parallax
+            var ty = reduce ? 0 : (rise + exitUp + drift);
+            children[k].style.opacity = op.toFixed(3);
+            children[k].style.transform = ty ? 'translateY(' + ty.toFixed(1) + 'px)' : 'none';
+            if (op > 0.02) blockOn = true;
+          }
+          el.style.opacity = blockOn ? 1 : 0;
+          el.classList.toggle('copy-on', leadOp > 0.5);    // draws the marker highlights
+          el.style.pointerEvents =
+            ((i === 0 && pr < 0.55) || (i === N - 1 && pr > 0.35)) ? 'auto' : 'none';
+        }
+
+        // demo cards: desktop floats opposite the copy; phone takes the copy's slot as beat 2
+        var mob = mobileNow();
+        var veilOp = 0;
+        for (var d = 0; d < demoEls.length; d++) {
+          var del = demoEls[d];
+          var dseg = CFG.sections[demoScene[d]] && CFG.sections[demoScene[d]]._seg;
+          if (!del || !dseg) continue;
+          var dpr = clamp((y - dseg.start) / (dseg.end - dseg.start));
+          var in0 = mob ? 0.5 : 0.2, in1 = mob ? 0.62 : 0.32;
+          var out0 = mob ? 0.9 : 0.84, out1 = mob ? 0.99 : 0.96;  // fully gone BEFORE the seam
+          var dIn = smooth((dpr - in0) / (in1 - in0));
+          var dOut = 1 - smooth((dpr - out0) / (out1 - out0));
+          var dop = Math.min(dIn, dOut);
+          if (dpr >= 0.995 || y > dseg.end) dop = 0;              // hard zero past the scene
+          del.style.opacity = dop.toFixed(3);
+          del.style.visibility = dop < 0.005 ? 'hidden' : 'visible';
+          var dty = reduce ? 0 : (24 * (1 - dIn) - 12 * (1 - dOut) + (0.5 - dpr) * 6);
+          del.style.transform = 'translateY(' + dty.toFixed(1) + 'px)';
+          if (mob && dop > veilOp) veilOp = dop;
+          var st = demoState[d];
+          if (dop > 0.4 && !st.active) { st.active = true; runDemo(del, st); }
+          else if (dop < 0.04 && st.active) { st.active = false; resetDemo(del, st); }
+        }
+        var veil = document.querySelector('.demo-veil');
+        if (veil) veil.style.opacity = (mob ? veilOp * 0.85 : 0).toFixed(3);
+      }
+      function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(apply); } }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', apply);
+      window.addEventListener('load', apply);
+      apply();
+    })();
+
+    // ---------- contact banner ----------
+    (function () {
+      var banner = document.getElementById('contact-banner');
+      var openers = document.querySelectorAll('[data-open-contact]');
+      var dockCta = document.querySelector('.dock-cta');
+      function setOpen(open) {
+        banner.classList.toggle('is-open', open);
+        if (dockCta) dockCta.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) track('contact_open', {});
+      }
+      Array.prototype.forEach.call(openers, function (b) {
+        b.addEventListener('click', function (e) {
+          e.stopPropagation();
+          setOpen(!banner.classList.contains('is-open'));
+        });
+      });
+      banner.querySelector('[data-close-contact]').addEventListener('click', function () { setOpen(false); });
+      // lead form → email via FormSubmit (no backend needed; static-site friendly).
+      // NOTE: the first-ever submission triggers a one-time activation email to the
+      // inbox below — it must be confirmed once before leads start arriving.
+      var LEAD_INBOX = 'studio@smb-arch.com';
+      var form = banner.querySelector('.lead-form');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var f = form.elements;
+        var first = f.fname.value.trim(), last = f.lname.value.trim();
+        var phone = f.phone.value.trim(), email = f.email.value.trim();
+        var errEl = form.querySelector('.lead-err');
+        errEl.classList.remove('show');
+        if (!first || !phone) {
+          (!first ? f.fname : f.phone).focus();
+          return;
+        }
+        // אימות טלפון ישראלי: +972 מנורמל ל-0, ואז 9-10 ספרות שמתחילות ב-0
+        var digits = phone.replace(/[\s\-().]/g, '').replace(/^\+?972/, '0');
+        if (!/^0\d{8,9}$/.test(digits)) {
+          errEl.textContent = 'מספר הטלפון לא נראה תקין — בדקו ונסו שוב.';
+          errEl.classList.add('show');
+          f.phone.focus();
+          return;
+        }
+        var btn = form.querySelector('.lead-submit');
+        btn.disabled = true; btn.textContent = 'שולח…';
+        fetch('https://formsubmit.co/ajax/' + LEAD_INBOX, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            'שם פרטי': first,
+            'שם משפחה': last,
+            'טלפון': phone,
+            'אימייל': email,
+            'אישור דיוור': f.consent.checked ? 'כן' : 'לא',
+            _subject: 'פנייה חדשה מאתר b.a.t — ' + first + (last ? ' ' + last : ''),
+            _template: 'table',
+            _honey: ''
+          })
+        }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+          .then(function () {
+            form.querySelector('.lead-sent').classList.add('show');
+            form.reset(); f.consent.checked = true;
+            btn.textContent = 'נשלח ✓';
+            track('lead_submit', {});
+          })
+          .catch(function () {
+            errEl.textContent = 'משהו השתבש בשליחה — נסו שוב, או חייגו אלינו ישירות.';
+            errEl.classList.add('show');
+            btn.disabled = false; btn.textContent = 'שליחה';
+          });
+      });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+      document.addEventListener('click', function (e) {
+        if (banner.classList.contains('is-open') && !banner.contains(e.target)) setOpen(false);
+      });
+    })();
+  </script>
+</body>
+</html>
