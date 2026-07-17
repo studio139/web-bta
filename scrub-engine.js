@@ -365,12 +365,22 @@ function mountScrollWorld(container, config) {
   let userReady = false;
   function primeVideo(v) {
     if (!isMobile() || !v) return;
-    // A muted, playsinline play() that REJECTS on a user gesture means the OS is
-    // blocking video — in practice iOS Low Power Mode, where currentTime scrubbing
-    // doesn't work either. Fall back to stills for the whole page instead of showing
-    // frozen/blank scenes.
-    try { const p = v.play(); if (p && p.then) p.then(() => { try { v.pause(); } catch (e) {} }).catch(() => { enterStillsMode(); }); }
-    catch (e) {}
+    // A rejected muted play() (iOS Low Power Mode / autoplay policy) does NOT imply
+    // currentTime scrubbing is broken — scrubbing never plays. Probe an actual seek
+    // and fall back to stills only when the decode pipeline truly refuses to seek.
+    try { const p = v.play(); if (p && p.then) p.then(() => { try { v.pause(); } catch (e) {} }).catch(() => { seekProbe(v); }); }
+    catch (e) { seekProbe(v); }
+  }
+  let seekProbed = false;
+  function seekProbe(v) {
+    if (seekProbed || stillsOnly) return;
+    if (!v || v.readyState < 1) return;      // can't prove failure on an unloaded clip
+    seekProbed = true;
+    let done = false;
+    const ok = () => { done = true; };
+    v.addEventListener('seeked', ok, { once: true });
+    try { v.currentTime = Math.min((v.duration || 1) - 0.05, (v.currentTime || 0) + 0.08); } catch (e) {}
+    setTimeout(() => { v.removeEventListener('seeked', ok); if (!done) enterStillsMode(); }, 1500);
   }
   function onFirstGesture() {
     if (userReady) return;
