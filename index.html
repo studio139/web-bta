@@ -21,7 +21,7 @@
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Suez+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -39,8 +39,8 @@
       --sw-ink: #2A2B33;
       --sw-ink-soft: #6a6b74;
       --sw-accent: #E4603F;            /* the single coral accent */
-      --sw-font-display: 'Assistant', 'Segoe UI', system-ui, sans-serif;
-      --sw-font-body: 'Assistant', 'Segoe UI', system-ui, sans-serif;
+      --sw-font-display: 'Suez One', 'Segoe UI', system-ui, serif;      /* editorial Hebrew display — the brand voice */
+      --sw-font-body: 'IBM Plex Sans Hebrew', 'Segoe UI', system-ui, sans-serif;
       --coral: #E4603F;
       --coral-soft: #F08165;
       --ink: #2A2B33;
@@ -78,9 +78,9 @@
     .scene-copy { position: absolute; opacity: 0; will-change: opacity, transform; }
     .scene-copy > * { will-change: opacity, transform; }
     .scene-copy h1, .scene-copy h2 {
-      margin: 0; font-family: var(--sw-font-display); font-weight: 800;
+      margin: 0; font-family: var(--sw-font-display); font-weight: 400;  /* Suez One ships one weight — and it's plenty */
       color: rgba(42,43,51,.96);                    /* strong ink — never pure black */
-      line-height: 1.08; letter-spacing: 0;
+      line-height: 1.18; letter-spacing: 0;
       /* NO text-shadow halo: shadows paint OVER inline backgrounds and washed out
          the marker highlights around the glyphs (looked like partial coverage) */
     }
@@ -94,7 +94,7 @@
     /* animated marker-highlight on key phrases — draws (RTL: from the right) when
        the block enters; scroll-mapped entrance, time-eased draw */
     .hl {
-      font-style: normal; font-weight: 800; color: rgba(42,43,51,.96);
+      font-style: normal; font-weight: inherit; color: rgba(42,43,51,.96);
       background-image: linear-gradient(0deg, rgba(240,129,101,.36), rgba(240,129,101,.36));
       background-repeat: no-repeat;
       /* block behind the whole word, but hugging the glyphs: the font's em-box is much
@@ -109,6 +109,7 @@
       border-radius: .1em;
     }
     .scene-copy.copy-on .hl { background-size: 100% .95em; }
+    .scene-copy p .hl { font-weight: 700; }          /* pop inside Plex body text */
     .scene-copy.copy-on p .hl { transition-delay: .6s; }
     @media (prefers-reduced-motion: reduce) { .hl { transition: none; background-size: 100% .34em; } }
 
@@ -125,7 +126,7 @@
     .copy-cta { margin-top: 30px; display: flex; gap: 16px; justify-content: center; align-items: center; flex-wrap: wrap; pointer-events: auto; }
     .btn-primary, .btn-wa {
       display: inline-flex; align-items: center; gap: 12px; text-decoration: none; cursor: pointer; border: 0;
-      font: 800 1.15rem var(--sw-font-body); color: #fff;
+      font: 700 1.15rem var(--sw-font-body); color: #fff;
       background: linear-gradient(135deg, var(--coral-soft), var(--coral));
       padding: 17px 42px; border-radius: 999px;
       box-shadow: 0 12px 32px rgba(228,96,63,.32), inset 0 1px 0 rgba(255,255,255,.25);
@@ -150,6 +151,11 @@
     .btn-phone:hover { transform: translateY(-3px); border-color: rgba(228,96,63,.4); box-shadow: 0 12px 30px rgba(42,43,51,.15); }
     .btn-phone svg { color: var(--coral); }
     .cta-micro { margin-top: 16px !important; font-size: .98rem !important; font-weight: 600 !important; color: rgba(42,43,51,.55) !important; }
+    @media (max-width: 700px) {
+      /* on phones the micro line can land on the agents — give it its own soft pill */
+      .cta-micro { display: inline-block; background: rgba(252,251,250,.82); border-radius: 999px;
+        padding: 5px 14px; color: rgba(42,43,51,.62) !important; }
+    }
 
     /* ---------- Live demo cards (scenes 2+3) ---------- */
     .scene-demo { position: absolute; opacity: 0; will-change: opacity, transform; }
@@ -180,14 +186,14 @@
     .dash-rail svg.on { color: var(--coral); }
     .dash-main { flex: 1; min-width: 0; padding: 13px 15px 15px; }
     .dash-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-    .dash-top h4 { margin: 0; font-size: 1rem; font-weight: 800; color: rgba(42,43,51,.92); }
+    .dash-top h4 { margin: 0; font-size: 1rem; font-weight: 700; color: rgba(42,43,51,.92); }
     .dash-top .sub { display: block; font-size: .68rem; font-weight: 600; color: rgba(42,43,51,.45); }
     .dash-date { font-size: .66rem; font-weight: 600; color: rgba(42,43,51,.42); white-space: nowrap; }
     .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 10px; }
     .kpi { background: #F8F6F3; border-radius: 10px; padding: 7px 9px; min-width: 0; }
     .kpi .lbl { display: flex; align-items: center; gap: 4px; font-size: .62rem; font-weight: 600; color: rgba(42,43,51,.45); white-space: nowrap; }
     .kpi .lbl svg { width: 11px; height: 11px; flex: 0 0 auto; }
-    .kpi .val { font-size: 1.05rem; font-weight: 800; color: rgba(42,43,51,.92); margin-top: 2px; white-space: nowrap; }
+    .kpi .val { font-size: 1.05rem; font-weight: 700; color: rgba(42,43,51,.92); margin-top: 2px; white-space: nowrap; }
     .kpi .dlt { display: block; font-size: .6rem; font-weight: 700; color: var(--coral); margin-top: 1px; }
     .kpi .dlt.mut { color: rgba(42,43,51,.4); }
     .chartbox { margin-top: 11px; }
@@ -248,7 +254,7 @@
     .dock-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(42,43,51,.13); color: var(--coral); border-color: rgba(228,96,63,.35); }
     .dock-btn svg { width: 23px; height: 23px; display: block; }
     .dock-cta {
-      border: 0; cursor: pointer; font: 800 .98rem var(--sw-font-body); color: #fff;
+      border: 0; cursor: pointer; font: 700 .98rem var(--sw-font-body); color: #fff;
       background: linear-gradient(135deg, var(--coral-soft), var(--coral));
       padding: 14px 26px; border-radius: 999px; white-space: nowrap;
       box-shadow: 0 10px 26px rgba(228,96,63,.32), inset 0 1px 0 rgba(255,255,255,.25);
@@ -268,7 +274,7 @@
       transition: opacity .45s var(--ease-out-expo), transform .45s var(--ease-out-expo);
     }
     .contact-banner.is-open { opacity: 1; transform: none; pointer-events: auto; }
-    .contact-banner h3 { margin: 0; font: 800 1.5rem var(--sw-font-display); color: rgba(42,43,51,.92); }
+    .contact-banner h3 { margin: 0; font: 400 1.45rem var(--sw-font-display); color: rgba(42,43,51,.92); }
     .contact-banner .sub { margin: 6px 0 18px; font-size: .95rem; font-weight: 600; color: rgba(42,43,51,.55); line-height: 1.5; }
     .banner-row {
       display: flex; align-items: center; gap: 12px; text-decoration: none;
@@ -296,7 +302,7 @@
     .lead-consent span { font-size: .78rem; font-weight: 600; color: rgba(42,43,51,.55); line-height: 1.45; }
     .lead-submit {
       width: 100%; margin-top: 12px; border: 0; cursor: pointer;
-      font: 800 1rem var(--sw-font-body); color: #fff;
+      font: 700 1rem var(--sw-font-body); color: #fff;
       background: linear-gradient(135deg, var(--coral-soft), var(--coral));
       padding: 13px 20px; border-radius: 999px;
       box-shadow: 0 10px 24px rgba(228,96,63,.3), inset 0 1px 0 rgba(255,255,255,.25);
@@ -468,7 +474,7 @@
                 <g class="tip">
                   <circle cx="214" cy="26" r="3.6" fill="#D85A30" stroke="#fff" stroke-width="1.6"/>
                   <rect x="152" y="2" width="88" height="19" rx="5" fill="#2A2B33" stroke="none"/>
-                  <text x="196" y="15" text-anchor="middle" font-size="9.5" font-weight="600" fill="#FCFBFA" stroke="none" font-family="Assistant, sans-serif">‏₪9,200 השבוע</text>
+                  <text x="196" y="15" text-anchor="middle" font-size="9.5" font-weight="600" fill="#FCFBFA" stroke="none" font-family="IBM Plex Sans Hebrew, sans-serif">‏₪9,200 השבוע</text>
                 </g>
               </svg>
             </div>
