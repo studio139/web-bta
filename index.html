@@ -367,6 +367,68 @@
 
     /* SEO block stays invisible even before the engine hides it (no flash) */
     [data-sw-seo] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+    /* ---------- desktop: soft white halo behind every copy block — type never
+       fights the agents, at ANY viewport ratio (blur = no visible "card") ---------- */
+    @media (min-width: 701px) {
+      .scene-copy::before {
+        content: ''; position: absolute; inset: -2.4rem -3.2rem; z-index: -1;
+        background: rgba(252,251,250,.78); border-radius: 56px; filter: blur(36px);
+      }
+    }
+
+    /* ---------- STORY MODE (phones): snap-slides, videos play ---------- */
+    html.story-mode, .story-mode body { overflow: hidden; height: 100%; overscroll-behavior: none; }
+    .story-mode #world, .story-mode .demo-veil, .story-mode .copy-scrim { display: none; }
+    .story {
+      position: fixed; inset: 0; z-index: 20; background: var(--sw-bg);
+      overflow-y: auto; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain; scrollbar-width: none;
+    }
+    .story::-webkit-scrollbar { display: none; }
+    .slide { position: relative; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden; }
+    .slide > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .slide-scrim {
+      position: absolute; inset: 0 0 auto 0; height: 62%; pointer-events: none;
+      background: linear-gradient(to bottom, rgba(252,251,250,.97) 0%, rgba(252,251,250,.9) 46%, rgba(252,251,250,0) 100%);
+    }
+    .story-mode .scene-copy { opacity: 1 !important; pointer-events: auto; }
+    .story-mode .scene-copy > * {
+      opacity: 0; transform: translateY(18px);
+      transition: opacity .75s var(--ease-out-expo), transform .75s var(--ease-out-expo);
+    }
+    .story-mode .slide.in .scene-copy > * { opacity: 1; transform: none; }
+    .story-mode .slide.in .scene-copy > *:nth-child(2) { transition-delay: .14s; }
+    .story-mode .slide.in .scene-copy > *:nth-child(3) { transition-delay: .26s; }
+    .story-mode .slide.in .scene-copy > *:nth-child(4) { transition-delay: .36s; }
+    .slide-demo { display: flex; align-items: center; justify-content: center; }
+    .story-mode .scene-demo {
+      position: static !important; opacity: 1 !important; visibility: visible !important;
+      transform: none !important; width: min(88vw, 430px);
+    }
+    .story-dots {
+      position: fixed; inset-inline-start: 9px; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 10px; z-index: 40;
+    }
+    .story-dots button {
+      width: 8px; height: 8px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+      background: rgba(42,43,51,.18); transition: background .3s, transform .3s;
+    }
+    .story-dots button.on { background: var(--coral); transform: scale(1.35); }
+    .story-next {
+      position: fixed; bottom: calc(78px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%);
+      z-index: 40; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(42,43,51,.1);
+      background: rgba(255,255,255,.92); color: rgba(42,43,51,.65); cursor: pointer;
+      box-shadow: 0 8px 22px rgba(42,43,51,.12); display: flex; align-items: center; justify-content: center;
+      animation: nudge 2.4s ease-in-out infinite; transition: opacity .4s;
+    }
+    .story-next svg { width: 22px; height: 22px; }
+    .story-next.gone { opacity: 0; pointer-events: none; }
+    @keyframes nudge { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(5px); } }
+    @media (prefers-reduced-motion: reduce) {
+      .story-next { animation: none; }
+      .story-mode .scene-copy > * { transition: none; opacity: 1; transform: none; }
+    }
   </style>
 </head>
 <body>
@@ -636,12 +698,11 @@
       ],
       connectors: [],   // seams are frame-continuous — dives crossfade directly
     };
-    // Phones: shorter track — thumb-scroll economy. Same story, ~35% fewer swipes.
-    if (Math.min(screen.width, screen.height) <= 600) {
-      CFG.sections.forEach(function (s) { s.scroll *= 0.62; s.linger *= 0.75; });
-      CFG.diveScroll = 1.0;
-    }
-    mountScrollWorld(document.getElementById('world'), CFG);
+    // Phones get STORY MODE (snap-slides, videos PLAY instead of scrub — touch
+    // momentum makes scrubbing feel broken); the scrub-world mounts on desktop only.
+    var IS_PHONE = Math.min(screen.width, screen.height) <= 600;
+    if (!IS_PHONE) mountScrollWorld(document.getElementById('world'), CFG);
+    if (IS_PHONE) document.documentElement.classList.add('story-mode');
 
     // Posters are ~25-115KB webp each and are the visual floor of every scene —
     // load them eagerly (lazy-load also never fires in background/hidden tabs).
@@ -653,6 +714,7 @@
     // Guard: if the engine mounted while the viewport reported 0×0 (hidden pane /
     // background tab), its layout is degenerate — re-trigger until it has real height.
     (function ensureLayout(tries) {
+      if (IS_PHONE) return;                            // no engine → nothing to heal
       var seg = CFG.sections[0]._seg;
       if (seg && seg.end > seg.start) return;
       window.dispatchEvent(new Event('resize'));
@@ -793,10 +855,122 @@
         if (scrim) scrim.style.opacity = (mob ? copyOpMax : 0).toFixed(3);
       }
       function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(apply); } }
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', apply);
-      window.addEventListener('load', apply);
-      apply();
+
+      // ---------- STORY MODE (phones): snap-slides, videos play, no scrubbing ----------
+      function buildStory() {
+        var story = document.createElement('div');
+        story.className = 'story';
+        // slide plan: [sceneIdx, copyEl|null, demoEl|null]
+        var plan = [
+          [0, blocks[0], null],
+          [1, blocks[1], null],
+          [1, null, demoEls[0]],
+          [2, blocks[2], null],
+          [2, null, demoEls[1]],
+          [3, blocks[3], null],
+          [4, blocks[4], null]
+        ];
+        var slides = plan.map(function (p, idx) {
+          var sl = document.createElement('section');
+          sl.className = 'slide' + (p[2] ? ' slide-demo' : '');
+          if (!p[2]) {
+            var v = document.createElement('video');
+            v.muted = true; v.playsInline = true; v.preload = idx === 0 ? 'auto' : 'metadata';
+            v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+            var sec = CFG.sections[p[0]];
+            v.src = sec.clipMobile || sec.clip;
+            v.poster = sec.posterMobile || sec.poster;
+            // leg 1 ends mid-dive to white (a seam frame) — after playing, settle
+            // back to a strong composition instead of freezing on emptiness
+            if (p[0] === 0) v.addEventListener('ended', function () {
+              v.style.transition = 'opacity .35s';
+              v.style.opacity = '0';
+              setTimeout(function () { try { v.currentTime = 1.8; } catch (e) {} v.style.opacity = '1'; }, 360);
+            });
+            sl.appendChild(v);
+            var sc = document.createElement('div');
+            sc.className = 'slide-scrim';
+            sl.appendChild(sc);
+          }
+          if (p[1]) sl.appendChild(p[1]);
+          if (p[2]) sl.appendChild(p[2]);
+          story.appendChild(sl);
+          return sl;
+        });
+        document.body.appendChild(story);
+
+        // dots rail + next chevron
+        var dots = document.createElement('div');
+        dots.className = 'story-dots';
+        var dotEls = slides.map(function (sl, i) {
+          var d = document.createElement('button');
+          d.type = 'button';
+          d.setAttribute('aria-label', 'מעבר לחלק ' + (i + 1));
+          d.addEventListener('click', function () { sl.scrollIntoView({ behavior: 'smooth' }); });
+          dots.appendChild(d);
+          return d;
+        });
+        document.body.appendChild(dots);
+        var next = document.createElement('button');
+        next.className = 'story-next';
+        next.type = 'button';
+        next.setAttribute('aria-label', 'לחלק הבא');
+        next.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+        document.body.appendChild(next);
+        var cur = 0;
+        next.addEventListener('click', function () {
+          if (cur < slides.length - 1) slides[cur + 1].scrollIntoView({ behavior: 'smooth' });
+        });
+
+        var demoBySlide = {};
+        plan.forEach(function (p, i) { if (p[2]) demoBySlide[i] = demoEls.indexOf(p[2]); });
+
+        function enter(i) {
+          cur = i;
+          dotEls.forEach(function (d, k) { d.classList.toggle('on', k === i); });
+          next.classList.toggle('gone', i === slides.length - 1);
+          var sl = slides[i];
+          sl.classList.add('in');
+          var copy = sl.querySelector('.scene-copy');
+          if (copy) copy.classList.add('copy-on');
+          var v = sl.querySelector('video');
+          if (v) { try { v.currentTime = 0; } catch (e) {} if (!reduce) v.play().catch(function () {}); }
+          if (i in demoBySlide) { var di = demoBySlide[i]; if (!demoState[di].active) { demoState[di].active = true; runDemo(demoEls[di], demoState[di]); } }
+          var scene = plan[i][0];
+          if (!sceneSeen[scene]) { sceneSeen[scene] = true; if (scene > 0) track('scene_reached', { scene: scene + 1, percent_scrolled: Math.round(((scene + 1) / N) * 100) }); }
+        }
+        function leave(i) {
+          var sl = slides[i];
+          sl.classList.remove('in');
+          var copy = sl.querySelector('.scene-copy');
+          if (copy) copy.classList.remove('copy-on');
+          var v = sl.querySelector('video');
+          if (v) { try { v.pause(); } catch (e) {} }
+          if (i in demoBySlide) { var di = demoBySlide[i]; if (demoState[di].active) { demoState[di].active = false; resetDemo(demoEls[di], demoState[di]); } }
+        }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            var i = slides.indexOf(en.target);
+            if (en.isIntersecting && en.intersectionRatio >= 0.6) enter(i);
+            else if (!en.isIntersecting && slides[i].classList.contains('in')) leave(i);
+          });
+        }, { root: story, threshold: [0, 0.6] });
+        slides.forEach(function (sl) { io.observe(sl); });
+
+        // iOS Low Power blocks autoplay until a gesture — retry the current slide once touched
+        var retry = function () { var v = slides[cur].querySelector('video'); if (v && v.paused && !reduce) v.play().catch(function () {}); };
+        window.addEventListener('touchstart', retry, { passive: true });
+        enter(0);
+      }
+
+      if (IS_PHONE) {
+        buildStory();
+      } else {
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', apply);
+        window.addEventListener('load', apply);
+        apply();
+      }
     })();
 
     // ---------- contact banner ----------
