@@ -386,13 +386,26 @@
       overscroll-behavior: contain; scrollbar-width: none;
     }
     .story::-webkit-scrollbar { display: none; }
-    .slide { position: relative; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden; }
-    .slide > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .slide-scrim {
-      position: absolute; inset: 0 0 auto 0; height: 62%; pointer-events: none;
-      background: linear-gradient(to bottom, rgba(252,251,250,.97) 0%, rgba(252,251,250,.9) 46%, rgba(252,251,250,0) 100%);
+    .slide {
+      position: relative; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden;
+      display: flex; flex-direction: column;
+      padding: calc(86px + env(safe-area-inset-top)) 0 calc(80px + env(safe-area-inset-bottom));
+      box-sizing: border-box;
     }
-    .story-mode .scene-copy { opacity: 1 !important; pointer-events: auto; }
+    /* the film floats as the FULL frame on the white world — letterbox is invisible */
+    .slide-vbox { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 10px 2px 0; }
+    .slide-vwrap { position: relative; width: 100%; aspect-ratio: 16/9; max-height: 100%; }
+    .slide-vwrap video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    .slide-vwrap::after {                              /* soft white vignette melts the frame edges into the page */
+      content: ''; position: absolute; inset: -2px; pointer-events: none;
+      box-shadow: inset 0 0 12px 3px var(--sw-bg);     /* gentle — leg1's agents live AT the frame edges */
+    }
+    .story-mode .scene-copy {
+      position: static !important; inset: auto !important; width: auto !important; max-width: none !important;
+      margin: 0 !important; padding: 0 6.5vw; text-align: center;
+      transform: none !important;                    /* copy-s1/s5 center via translateX(-50%) — lethal when static */
+      opacity: 1 !important; pointer-events: auto; box-sizing: border-box;
+    }
     .story-mode .scene-copy > * {
       opacity: 0; transform: translateY(18px);
       transition: opacity .75s var(--ease-out-expo), transform .75s var(--ease-out-expo);
@@ -401,6 +414,13 @@
     .story-mode .slide.in .scene-copy > *:nth-child(2) { transition-delay: .14s; }
     .story-mode .slide.in .scene-copy > *:nth-child(3) { transition-delay: .26s; }
     .story-mode .slide.in .scene-copy > *:nth-child(4) { transition-delay: .36s; }
+    /* story type scale: compact — the film must keep real estate on every slide */
+    .story-mode .scene-copy h1 { font-size: clamp(1.9rem, 8vw, 2.35rem); }
+    .story-mode .scene-copy h2 { font-size: clamp(1.55rem, 6.8vw, 2rem); }
+    .story-mode .scene-copy p { font-size: clamp(.95rem, 4vw, 1.05rem); line-height: 1.55; margin-top: .6em; }
+    .story-mode .cta-micro { margin-top: 10px !important; font-size: .84rem !important; padding: 4px 12px; }
+    .story-mode .btn-primary, .story-mode .btn-wa { font-size: .97rem; padding: 12px 26px; }
+    .story-mode .btn-phone { font-size: .93rem; padding: 10px 20px; }
     .slide-demo { display: flex; align-items: center; justify-content: center; }
     .story-mode .scene-demo {
       position: static !important; opacity: 1 !important; visibility: visible !important;
@@ -672,28 +692,28 @@
       sections: [
         { id: 's1', label: 'הצוות',
           still: 'assets/scene1-still.webp?v=3', stillMobile: 'assets/scene1-still-m.webp?v=3',
-          poster: 'assets/leg1-poster.webp?v=3', posterMobile: 'assets/leg1-poster-m.webp?v=3',
-          clip: 'assets/vid/leg1.mp4?v=3', clipMobile: 'assets/vid/leg1-m.mp4?v=3',
+          poster: 'assets/leg1-poster.webp?v=3', posterMobile: 'assets/leg1-poster-m.webp?v=4',
+          clip: 'assets/vid/leg1.mp4?v=3', clipMobile: 'assets/vid/leg1-m.mp4?v=4',
           accent: '#E4603F', scroll: 1.9, linger: 0.45 },
         { id: 's2', label: 'המערכת',
           still: 'assets/scene2-still.webp?v=3', stillMobile: 'assets/scene2-still-m.webp?v=3',
-          poster: 'assets/leg2-poster.webp?v=3', posterMobile: 'assets/leg2-poster-m.webp?v=3',
-          clip: 'assets/vid/leg2.mp4?v=3', clipMobile: 'assets/vid/leg2-m.mp4?v=3',
+          poster: 'assets/leg2-poster.webp?v=3', posterMobile: 'assets/leg2-poster-m.webp?v=4',
+          clip: 'assets/vid/leg2.mp4?v=3', clipMobile: 'assets/vid/leg2-m.mp4?v=4',
           accent: '#E4603F', scroll: 1.85, linger: 0.5 },
         { id: 's3', label: 'הסוכנים',
           still: 'assets/scene3-still.webp?v=3', stillMobile: 'assets/scene3-still-m.webp?v=3',
-          poster: 'assets/leg3-poster.webp?v=3', posterMobile: 'assets/leg3-poster-m.webp?v=3',
-          clip: 'assets/vid/leg3.mp4?v=3', clipMobile: 'assets/vid/leg3-m.mp4?v=3',
+          poster: 'assets/leg3-poster.webp?v=3', posterMobile: 'assets/leg3-poster-m.webp?v=4',
+          clip: 'assets/vid/leg3.mp4?v=3', clipMobile: 'assets/vid/leg3-m.mp4?v=4',
           accent: '#E4603F', scroll: 1.85, linger: 0.5 },
         { id: 's4', label: 'התוצאה',
           still: 'assets/scene4-still.webp?v=3', stillMobile: 'assets/scene4-still-m.webp?v=3',
-          poster: 'assets/leg4-poster.webp?v=3', posterMobile: 'assets/leg4-poster-m.webp?v=3',
-          clip: 'assets/vid/leg4.mp4?v=3', clipMobile: 'assets/vid/leg4-m.mp4?v=3',
+          poster: 'assets/leg4-poster.webp?v=3', posterMobile: 'assets/leg4-poster-m.webp?v=4',
+          clip: 'assets/vid/leg4.mp4?v=3', clipMobile: 'assets/vid/leg4-m.mp4?v=4',
           accent: '#E4603F', scroll: 1.85, linger: 0.5 },
         { id: 's5', label: 'דברו איתנו',
           still: 'assets/scene5-still.webp?v=3', stillMobile: 'assets/scene5-still-m.webp?v=3',
-          poster: 'assets/leg5-poster.webp?v=3', posterMobile: 'assets/leg5-poster-m.webp?v=3',
-          clip: 'assets/vid/leg5.mp4?v=3', clipMobile: 'assets/vid/leg5-m.mp4?v=3',
+          poster: 'assets/leg5-poster.webp?v=3', posterMobile: 'assets/leg5-poster-m.webp?v=4',
+          clip: 'assets/vid/leg5.mp4?v=3', clipMobile: 'assets/vid/leg5-m.mp4?v=4',
           accent: '#E4603F', scroll: 1.9, linger: 0.3 },
       ],
       connectors: [],   // seams are frame-continuous — dives crossfade directly
@@ -873,6 +893,7 @@
         var slides = plan.map(function (p, idx) {
           var sl = document.createElement('section');
           sl.className = 'slide' + (p[2] ? ' slide-demo' : '');
+          if (p[1]) sl.appendChild(p[1]);
           if (!p[2]) {
             var v = document.createElement('video');
             v.muted = true; v.playsInline = true; v.preload = idx === 0 ? 'auto' : 'metadata';
@@ -887,12 +908,14 @@
               v.style.opacity = '0';
               setTimeout(function () { try { v.currentTime = 1.8; } catch (e) {} v.style.opacity = '1'; }, 360);
             });
-            sl.appendChild(v);
-            var sc = document.createElement('div');
-            sc.className = 'slide-scrim';
-            sl.appendChild(sc);
+            var vbox = document.createElement('div');
+            vbox.className = 'slide-vbox';
+            var vwrap = document.createElement('div');
+            vwrap.className = 'slide-vwrap';
+            vwrap.appendChild(v);
+            vbox.appendChild(vwrap);
+            sl.appendChild(vbox);
           }
-          if (p[1]) sl.appendChild(p[1]);
           if (p[2]) sl.appendChild(p[2]);
           story.appendChild(sl);
           return sl;
