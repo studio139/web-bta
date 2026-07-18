@@ -392,17 +392,18 @@
       padding: calc(86px + env(safe-area-inset-top)) 0 calc(80px + env(safe-area-inset-bottom));
       box-sizing: border-box;
     }
-    /* the film floats as the FULL frame on the white world — letterbox is invisible */
-    .slide-vbox { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 10px 2px 0; }
-    .slide-vwrap { position: relative; width: 100%; aspect-ratio: 16/9; max-height: 100%; }
-    .slide-vwrap video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-    .slide-vwrap::after {                              /* soft white vignette melts the frame edges into the page */
-      content: ''; position: absolute; inset: -2px; pointer-events: none;
-      box-shadow: inset 0 0 12px 3px var(--sw-bg);     /* gentle — leg1's agents live AT the frame edges */
+    /* the native 9:16 film fills the slide edge-to-edge — its white IS the page white */
+    .slide-film {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center; z-index: 0; background: var(--sw-bg);
+    }
+    .slide-scrim-v {                                   /* white curtain keeps the copy readable over the film */
+      position: absolute; inset: 0 0 auto 0; height: 54%; z-index: 1; pointer-events: none;
+      background: linear-gradient(to bottom, rgba(252,251,250,.95) 0%, rgba(252,251,250,.72) 48%, rgba(252,251,250,0) 100%);
     }
     .story-mode .scene-copy {
-      position: static !important; inset: auto !important; width: auto !important; max-width: none !important;
-      margin: 0 !important; padding: 0 6.5vw; text-align: center;
+      position: relative !important; inset: auto !important; width: auto !important; max-width: none !important;
+      margin: 0 !important; padding: 0 6.5vw; text-align: center; z-index: 2;
       transform: none !important;                    /* copy-s1/s5 center via translateX(-50%) — lethal when static */
       opacity: 1 !important; pointer-events: auto; box-sizing: border-box;
     }
@@ -694,26 +695,31 @@
           still: 'assets/scene1-still.webp?v=3', stillMobile: 'assets/scene1-still-m.webp?v=3',
           poster: 'assets/leg1-poster.webp?v=3', posterMobile: 'assets/leg1-poster-m.webp?v=4',
           clip: 'assets/vid/leg1.mp4?v=3', clipMobile: 'assets/vid/leg1-m.mp4?v=4',
+          clipV: 'assets/vid/leg1-v.mp4?v=5', posterV: 'assets/leg1-v-poster.webp?v=5',
           accent: '#E4603F', scroll: 1.45, linger: 0.4 },
         { id: 's2', label: 'המערכת',
           still: 'assets/scene2-still.webp?v=3', stillMobile: 'assets/scene2-still-m.webp?v=3',
           poster: 'assets/leg2-poster.webp?v=3', posterMobile: 'assets/leg2-poster-m.webp?v=4',
           clip: 'assets/vid/leg2.mp4?v=3', clipMobile: 'assets/vid/leg2-m.mp4?v=4',
+          clipV: 'assets/vid/leg2-v.mp4?v=5', posterV: 'assets/leg2-v-poster.webp?v=5',
           accent: '#E4603F', scroll: 1.42, linger: 0.44 },
         { id: 's3', label: 'הסוכנים',
           still: 'assets/scene3-still.webp?v=3', stillMobile: 'assets/scene3-still-m.webp?v=3',
           poster: 'assets/leg3-poster.webp?v=3', posterMobile: 'assets/leg3-poster-m.webp?v=4',
           clip: 'assets/vid/leg3.mp4?v=3', clipMobile: 'assets/vid/leg3-m.mp4?v=4',
+          clipV: 'assets/vid/leg3-v.mp4?v=5', posterV: 'assets/leg3-v-poster.webp?v=5',
           accent: '#E4603F', scroll: 1.42, linger: 0.44 },
         { id: 's4', label: 'התוצאה',
           still: 'assets/scene4-still.webp?v=3', stillMobile: 'assets/scene4-still-m.webp?v=3',
           poster: 'assets/leg4-poster.webp?v=3', posterMobile: 'assets/leg4-poster-m.webp?v=4',
           clip: 'assets/vid/leg4.mp4?v=3', clipMobile: 'assets/vid/leg4-m.mp4?v=4',
+          clipV: 'assets/vid/leg4-v.mp4?v=5', posterV: 'assets/leg4-v-poster.webp?v=5',
           accent: '#E4603F', scroll: 1.42, linger: 0.44 },
         { id: 's5', label: 'דברו איתנו',
           still: 'assets/scene5-still.webp?v=3', stillMobile: 'assets/scene5-still-m.webp?v=3',
           poster: 'assets/leg5-poster.webp?v=3', posterMobile: 'assets/leg5-poster-m.webp?v=4',
           clip: 'assets/vid/leg5.mp4?v=3', clipMobile: 'assets/vid/leg5-m.mp4?v=4',
+          clipV: 'assets/vid/leg5-v.mp4?v=5', posterV: 'assets/leg5-v-poster.webp?v=5',
           accent: '#E4603F', scroll: 1.5, linger: 0.28 },
       ],
       connectors: [],   // seams are frame-continuous — dives crossfade directly
@@ -893,29 +899,23 @@
         var slides = plan.map(function (p, idx) {
           var sl = document.createElement('section');
           sl.className = 'slide' + (p[2] ? ' slide-demo' : '');
-          if (p[1]) sl.appendChild(p[1]);
           if (!p[2]) {
+            // native 9:16 clip, full-bleed cover — each clip OPENS on the previous
+            // clip's closing frame (story chain) and ENDS settled, so the freeze
+            // frame is always a strong composition. No settle-back hacks needed.
             var v = document.createElement('video');
+            v.className = 'slide-film';
             v.muted = true; v.playsInline = true; v.preload = idx === 0 ? 'auto' : 'metadata';
             v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
             var sec = CFG.sections[p[0]];
-            v.src = sec.clipMobile || sec.clip;
-            v.poster = sec.posterMobile || sec.poster;
-            // leg 1 ends mid-dive to white (a seam frame) — after playing, settle
-            // back to a strong composition instead of freezing on emptiness
-            if (p[0] === 0) v.addEventListener('ended', function () {
-              v.style.transition = 'opacity .35s';
-              v.style.opacity = '0';
-              setTimeout(function () { try { v.currentTime = 1.8; } catch (e) {} v.style.opacity = '1'; }, 360);
-            });
-            var vbox = document.createElement('div');
-            vbox.className = 'slide-vbox';
-            var vwrap = document.createElement('div');
-            vwrap.className = 'slide-vwrap';
-            vwrap.appendChild(v);
-            vbox.appendChild(vwrap);
-            sl.appendChild(vbox);
+            v.src = sec.clipV || sec.clipMobile || sec.clip;
+            v.poster = sec.posterV || sec.posterMobile || sec.poster;
+            sl.appendChild(v);
+            var scrim = document.createElement('div');
+            scrim.className = 'slide-scrim-v';
+            sl.appendChild(scrim);
           }
+          if (p[1]) sl.appendChild(p[1]);
           if (p[2]) sl.appendChild(p[2]);
           story.appendChild(sl);
           return sl;
